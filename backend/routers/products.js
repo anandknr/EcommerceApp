@@ -1,5 +1,6 @@
 const { Product } = require('../models/product');
 const express = require('express');
+const { Category } = require('../models/category');
 const router = express.Router();
 
 router.get('/', async(req, res) => {
@@ -7,23 +8,33 @@ router.get('/', async(req, res) => {
     res.send(productList);
 });
 
-router.post('/', (req, res) => {
+router.post('/', async(req, res) => {
 
-    const product = new Product({
+    let category = await Category.findById(req.body.category);
+
+    if (!category) {
+        res.status(400).send('Invalid Category');
+    }
+    let product = new Product({
         name: req.body.name,
+        description: req.body.description,
+        richDescription: req.body.richDescription,
         image: req.body.image,
-        countInStock: req.body.countInStock
+        brand: req.body.brand,
+        price: req.body.price,
+        category: req.body.category,
+        countInStock: req.body.countInStock,
+        numReviews: req.body.numReviews,
+        isFeatured: req.body.isFeatured
     });
+    product = await product.save();
 
-    product.save()
-        .then((createdProduct => {
-            res.status(201).json(createdProduct)
-        }))
-        .catch((err => {
-            res.status(500).json({
-                error: err
-            })
-        }));
+    if (!product) {
+        res.status(500).send('The product cannot be created');
+    }
+
+    res.status(200).send(product);
+
 
     // let outObj = req.body;
     // res.send(outObj);
