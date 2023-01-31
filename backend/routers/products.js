@@ -48,4 +48,30 @@ router.post('/', async(req, res) => {
     // res.send(outObj);
 });
 
+router.put("/:id", async(req, res) => {
+
+    let category = await Category.findById(req.body.category);
+
+    if (!category) {
+        res.status(400).send('Invalid Category');
+    }
+
+    let product = await Product.findByIdAndUpdate(req.params.id, {
+        name: req.body.name,
+        description: req.body.description,
+        richDescription: req.body.richDescription,
+        image: req.body.image,
+        brand: req.body.brand,
+        price: req.body.price,
+        category: req.body.category,
+    }, { new: true });
+
+    if (!product) {
+        res.status(404).send({ success: false, message: "product cannot be updated" });
+    }
+
+    res.status(200).send(product);
+
+});
+
 module.exports = router;
