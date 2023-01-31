@@ -4,8 +4,16 @@ const { Category } = require('../models/category');
 const router = express.Router();
 
 router.get('/', async(req, res) => {
-    let productList = await Product.find();
+    let productList = await Product.find().select("name image -_id");
     res.send(productList);
+});
+
+router.get('/:id', async(req, res) => {
+    let product = await Product.findById(req.params.id);
+    if (!product) {
+        res.status(404).send({ success: false, message: "product not found" });
+    }
+    res.send(product);
 });
 
 router.post('/', async(req, res) => {
