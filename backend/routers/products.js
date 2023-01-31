@@ -4,7 +4,7 @@ const { Category } = require('../models/category');
 const router = express.Router();
 
 router.get('/', async(req, res) => {
-    let productList = await Product.find().select("name image -_id");
+    let productList = await Product.find().populate("category");
     res.send(productList);
 });
 
