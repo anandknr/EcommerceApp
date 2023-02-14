@@ -2,6 +2,7 @@ const { Product } = require('../models/product');
 const express = require('express');
 const { Category } = require('../models/category');
 const router = express.Router();
+const mongoose = require('mongoose');
 
 router.get('/', async(req, res) => {
     let productList = await Product.find().populate("category");
@@ -50,6 +51,10 @@ router.post('/', async(req, res) => {
 
 router.put("/:id", async(req, res) => {
 
+    if (!mongoose.isValidObjectId(req.params.id)) {
+        res.status(400).send('Invalid object ID');
+    }
+
     let category = await Category.findById(req.body.category);
 
     if (!category) {
@@ -73,5 +78,17 @@ router.put("/:id", async(req, res) => {
     res.status(200).send(product);
 
 });
+
+router.delete('/:id', async(req, res) => {
+    Product.findByIdAndRemove(req.params.id).then(product => {
+        if (product) {
+            return res.status(200).json({ success: true, message: 'the product deleted' })
+        } else {
+            return res.status(404).json({ success: false, message: 'product not deleted' })
+        }
+    }).catch(err => {
+        return res.status(400).json({ success: false, message: err })
+    })
+})
 
 module.exports = router;
