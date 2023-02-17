@@ -17,6 +17,15 @@ router.get('/:id', async(req, res) => {
     res.send(product);
 });
 
+router.get('/get/featured/:limit?', async(req, res) => {
+    var count = req.params.limit ? req.params.limit : 0;
+    let product = await Product.find({ isFeatured: true }).limit(+count).select(["name", "isFeatured"]);
+    if (!product) {
+        res.status(404).send({ success: false, message: "product not found" });
+    }
+    res.send(product);
+});
+
 router.get('/get/count', async(req, res) => {
     console.log("bbb");
     const productCount = await Product.countDocuments();
