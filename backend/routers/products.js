@@ -5,7 +5,12 @@ const router = express.Router();
 const mongoose = require('mongoose');
 
 router.get('/', async(req, res) => {
-    let productList = await Product.find().populate("category");
+    filter = {};
+    if (req.query.categories) {
+        filter = { category: req.query.categories.split(",") }
+        console.log(filter);
+    }
+    let productList = await Product.find(filter).populate("category");
     res.send(productList);
 });
 
