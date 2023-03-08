@@ -40,15 +40,6 @@ const userSchema = mongoose.Schema({
     country: {
         type: String,
         default: ''
-    },
-    email: {
-        type: String,
-        required: true
-    },
-    image: String,
-    countInStock: {
-        type: Number,
-        required: true
     }
 });
 
