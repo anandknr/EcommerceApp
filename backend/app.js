@@ -3,20 +3,19 @@ const app = new express();
 
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const { Router } = require('express');
+
 const cors = require('cors');
-
-
-
 require('dotenv/config');
+const authJwt = require('./helpers/jwt');
+
 app.use(cors());
 app.options('*', cors());
 app.use(express.json());
 app.use(morgan('tiny'));
+app.use(authJwt());
 
 const api = process.env.API_URL;
 
-// const Product = require('./models/product');
 const productRouter = require('./routers/products');
 const categoryRouter = require('./routers/categories');
 const orderRouter = require('./routers/orders');
@@ -36,6 +35,11 @@ mongoose.connect(process.env.CONNECTION_STRING, { dbName: 'eshop-db' })
     .catch((err) => {
         console.log(err);
     });
+
+app.get('/', async(req, res) => {
+
+    res.status(200).send("hello world " + Math.random());
+})
 
 app.listen(3000, () => {
     console.log("hello world" + api);
