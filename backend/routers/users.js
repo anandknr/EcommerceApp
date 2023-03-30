@@ -101,4 +101,26 @@ router.post('/login', async(req, res) => {
 
 });
 
+router.get('/get/count', async(req, res) => {
+    console.log("bbb");
+    const userCount = await User.countDocuments();
+    console.log("hhh");
+    if (!userCount) {
+        res.status(404).send({ success: false, message: "userCount count not found" });
+    }
+    res.send({ userCount: userCount });
+});
+
+router.delete('/:id', async(req, res) => {
+    User.findByIdAndRemove(req.params.id).then(user => {
+        if (user) {
+            return res.status(200).json({ success: true, message: 'the user deleted' })
+        } else {
+            return res.status(404).json({ success: false, message: 'user not deleted' })
+        }
+    }).catch(err => {
+        return res.status(400).json({ success: false, message: err })
+    })
+})
+
 module.exports = router;
